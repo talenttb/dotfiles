@@ -1,0 +1,74 @@
+[safe]
+    directory = /workspaces/hitthespot
+[alias]
+    a = add -p
+    p = pull
+    l = log --remerge-diff
+    br = branch
+    aci = !git add . && git ci
+    ci = commit -v
+    noedit = commit --amend --no-edit
+    nnoedit = commit -n --amend --no-edit
+    co = checkout
+    sw = switch
+    dc = diff --cached --word-diff=color
+    di = diff --word-diff=color
+    dft = difftool
+    genpatch = !git diff --no-ext-diff > changes.patch
+    gl = log --decorate --graph --pretty=oneline
+    st = status -bs
+    swm = !git switch $(basename $(git symbolic-ref --short refs/remotes/origin/HEAD)) && git p
+    swmOld = "!f() { \
+        if git show-ref --verify --quiet refs/heads/master; then \
+            git switch master; \
+        elif git show-ref --verify --quiet refs/heads/main; then \
+            git switch main; \
+        else \
+            echo 'Neither master nor main branch exists.'; \
+        fi; \
+    }; f; git p;"
+    gone = "!f() { git fetch --all --prune; git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D; }; f"
+    wipe = !git restore . && git clean -fd
+[color]
+    ui = auto
+[core]
+    preloadindex = yes
+    pager = delta
+[diff]
+    algorithm = minimal
+    colorMoved = default
+    tool = difftastic
+    external = difft
+[difftool]
+    prompt = false
+[difftool "difftastic"]
+    cmd = difft "$LOCAL" "$REMOTE"
+[pager]
+    difftool = true
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    light = true    # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+    side-by-side = true
+    line-numbers = true
+[merge]
+    conflictstyle = diff3
+
+[includeIf "gitdir:~/talenttb/"]
+    path = ~/.gitconfig.me
+[includeIf "gitdir:~/project/"]
+    path = ~/.gitconfig.me
+[includeIf "gitdir:~/ds/"]
+    path = ~/ds/gitconfig.ds
+#[includeIf "gitdir:~/work/"]
+#    path = .gitconfig-work
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[push]
+	autoSetupRemote = true
+[pull]
+	ff = only
